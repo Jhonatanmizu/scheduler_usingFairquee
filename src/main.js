@@ -19,19 +19,22 @@ function generateProcess(name, processSize) {
     running: false,
     processSize: processSize,
     executedTime: 0,
-    restTime: 0,
-    createTime: 0,
+    restTime: processSize,
+    createTime: totalQuantum,
     used: 0,
     shouldUse: 0,
   };
+  totalQuantum += quantum;
 
   return processModel;
 }
 function createProcess() {
   quant = prompt("Digite a quantidade de process : ");
-  for (let i = 1; i < Number(quant); i++) {
+  for (let i = 1; i <= Number(quant); i++) {
     let pName = "processo : ";
-    process.push(processModel(pName + i, Math.floor(Math.random() * 10 + 1)));
+    process.push(
+      generateProcess(pName + i, Math.floor(Math.random() * 10 + 1))
+    );
   }
 }
 /**
@@ -66,21 +69,7 @@ function executeProcess() {
   quantOfProcess = process.length;
   if (process.length == 0) return;
   process = process.map((pr) => {
-    if (!pr.running) {
-      ex = {
-        id: pr.id,
-        name: pr.name,
-        running: pr.running,
-        processSize: pr.processSize,
-        executedTime: pr.executedTime,
-        restTime: pr.processSize,
-        createTime: totalQuantum,
-        used: pr.used,
-        shouldUse: pr.shouldUse,
-      };
-      // globalTimer += quantum;
-      return ex;
-    } else {
+    if (pr.restTime >= 0) {
       ex = {
         id: pr.id,
         name: pr.name,
@@ -93,8 +82,27 @@ function executeProcess() {
         shouldUse: pr.used / (totalQuantum / quantOfProcess),
       };
       totalQuantum += quantum;
+      console.log(pr.used / (totalQuantum / quantOfProcess));
       return ex;
     }
+
+    // if (!pr.running) {
+    //   ex = {
+    //     id: pr.id,
+    //     name: pr.name,
+    //     running: pr.running,
+    //     processSize: pr.processSize,
+    //     executedTime: pr.executedTime,
+    //     restTime: pr.processSize,
+    //     createTime: totalQuantum,
+    //     used: pr.used,
+    //     shouldUse: pr.shouldUse,
+    //   };
+    //   // globalTimer += quantum;
+    //   return ex;
+    // } else {
+
+    // }
   });
   // console.log("PRCO", process);
   sortByShouldUse(process);
@@ -102,15 +110,8 @@ function executeProcess() {
 }
 function main() {
   console.log("PROCESS SCHEDULER");
-  // let title = "Process";
-  // let processQuant = Number(prompt("Digite a quantidade de processos : "));
-  // if (typeof processQuant !== "number") return;
-  // for (let i = 0; i < processQuant; i++) {
-  //   let sizeProcess = Math.floor(Math.random() * 10);
-  //   process.push(createProcess(title + i, sizeProcess != 0 ? sizeProcess : 6));
-  // }
-  // do {
   createProcess();
+  executeProcess();
   console.log("FINISHED", finishedProcess);
 }
 
