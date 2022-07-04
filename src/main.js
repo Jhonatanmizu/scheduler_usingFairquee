@@ -28,7 +28,7 @@ function generateProcess(name, processSize) {
     used: 0, // quanto usou
     shouldUse: 0, // quanto deveria usar
   };
-  console.log("CRIOU O PROCESSO", processModel);
+  // console.log("CRIOU O PROCESSO", processModel);
   totalQuantum += quantum;
 
   return processModel;
@@ -86,76 +86,46 @@ function sortByShouldUse(process) {
  * It executes the process, and then sorts the process by the shouldUse property
  * @returns the process array with the updated values.
  */
+let counter = 0;
 function executeProcess() {
-  if (process.length < 1) return;
+  // if (process.length < 1) return;
 
-  // process = process.map((pr) => {
-  //   if (pr.restTime > 0) {
-  //     // console.log("QUANTUM GLOBAL", totalQuantum);
-  //     // console.log("tamanho do array de proc", process.length);
+  do {
+    for (let i = 0; i < process.length; i++) {
+      if (process[i].restTime > 0) {
+        // ex = {
+        //   id: process[i].id,
+        //   name: process[i].name,
+        //   running: true,
+        //   processSize: process[i].processSize,
+        //   executedTime: totalQuantum,
+        //   restTime: process[i].restTime - quantum,
+        //   createTime: process[i].createTime,
+        //   used: process[i].used + quantum,
+        //   shouldUse: 0,
+        // };
+        process[i].restTime = process[i].restTime - quantum;
+        process[i].used = process[i].used + quantum;
+        process[i].shouldUse =
+          process[i].used / (totalQuantum / process.length);
+        process[i].shouldUse = Number(process[i].shouldUse.toFixed(3));
+        // console.log("pr used", ex.used);
 
-  //     ex = {
-  //       id: pr.id,
-  //       name: pr.name,
-  //       running: true,
-  //       processSize: pr.processSize,
-  //       executedTime: totalQuantum,
-  //       restTime: pr.restTime - quantum,
-  //       createTime: pr.createTime,
-  //       used: pr.used + quantum,
-  //       shouldUse: 0, //adflskjkalsfdjasklj
-  //     };
-  //     ex.shouldUse = ex.used / (totalQuantum / process.length);
-  //     ex.shouldUse = Number(ex.shouldUse.toFixed(3));
-  //     console.log("pr used", ex.used);
-
-  //     totalQuantum += quantum;
-  //     // console.log("PRRESTTIME", pr.restTime);
-  //     console.log("EX", ex);
-  //     return ex;
-  //   }
-  //   quant--;
-  // });
-
-  for (let i = 0; i < process.length; i++) {
-    if (process[i].restTime > 0) {
-      ex = {
-        id: process[i].id,
-        name: process[i].name,
-        running: true,
-        processSize: process[i].processSize,
-        executedTime: totalQuantum,
-        restTime: process[i].restTime - quantum,
-        createTime: process[i].createTime,
-        used: process[i].used + quantum,
-        shouldUse: 0, //adflskjkalsfdjasklj
-      };
-      ex.shouldUse = ex.used / (totalQuantum / process.length);
-      ex.shouldUse = Number(ex.shouldUse.toFixed(3));
-      // console.log("pr used", ex.used);
-
-      totalQuantum += quantum;
-      tempArray.push(ex);
+        totalQuantum += quantum;
+        // tempArray.push(ex);
+      } else {
+        counter++;
+      }
     }
-  }
-  process = tempArray;
-  tempArray = [];
-  console.log("O PROCESSO CLONAdo", process);
-  // sortByShouldUse(process);
-
-  removeProcess(process);
-  executeProcess();
+  } while (counter < process.length);
 }
 /**
  * When the user clicks the button, show the result of the finishedProcess variable in the console.
  */
 function showResult() {
   console.log("RESULTADO");
-  console.log(finishedProcess);
-  // for (let i = 0; i < finishedProcess.length; i++) {
-  // const element = array[i];
-  // console.log(process[i]);
-  // }
+  sortByShouldUse(process);
+  console.log(process);
 }
 /**
  * > The function creates a process, then executes the process until there is only one process left
