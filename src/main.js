@@ -1,6 +1,9 @@
+const { findIndex } = require("lodash");
+
 const prompt = require("prompt-sync")();
 
 let process = [];
+let tempArray = [];
 let totalQuantum = 0;
 let quantum = 3;
 let quant = 0;
@@ -48,15 +51,26 @@ function createProcess() {
  * @param process - the process to be removed
  */
 function removeProcess(process) {
-  // console.log("Array de processo", process.length);
-  if (process.length > 1) {
-    process.forEach((element, index) => {
-      console.log("REST", element.restTime);
-      if (element.restTime > 0) {
-        finishedProcess.push(process.splice(index, 1));
+  console.log("PROCESSOS", process);
+  if (process.length > 0) {
+    for (let i = 0; i < process.length; i++) {
+      if (process[i].restTime <= 0) {
+        // console.log("FJALJAFKJ", process);
+        console.log("i e o processo", i, process[i]);
+        finishedProcess.push(process.splice(i, 1));
       }
-    });
+    }
   }
+  // if (process.length > 0) {
+  //   process.forEach((pr, index) => {
+  //     if (pr.restTime <= 0) {
+  //       // let index = process.find((pre) => pre.id == pr.id);
+  //       let removed = process.splice(index, 1);
+  //       // process.slice(())
+  //       finishedProcess.push(removed);
+  //     }
+  //   });
+  // }
 }
 /**
  * It sorts an array of objects by the value of the property `shouldUse`
@@ -73,39 +87,64 @@ function sortByShouldUse(process) {
  * @returns the process array with the updated values.
  */
 function executeProcess() {
-  if (process.length == 0) return;
+  if (process.length < 1) return;
 
-  process = process.map((pr) => {
-    if (pr.restTime > 0) {
-      // console.log("QUANTUM GLOBAL", totalQuantum);
-      // console.log("tamanho do array de proc", process.length);
+  // process = process.map((pr) => {
+  //   if (pr.restTime > 0) {
+  //     // console.log("QUANTUM GLOBAL", totalQuantum);
+  //     // console.log("tamanho do array de proc", process.length);
 
+  //     ex = {
+  //       id: pr.id,
+  //       name: pr.name,
+  //       running: true,
+  //       processSize: pr.processSize,
+  //       executedTime: totalQuantum,
+  //       restTime: pr.restTime - quantum,
+  //       createTime: pr.createTime,
+  //       used: pr.used + quantum,
+  //       shouldUse: 0, //adflskjkalsfdjasklj
+  //     };
+  //     ex.shouldUse = ex.used / (totalQuantum / process.length);
+  //     ex.shouldUse = Number(ex.shouldUse.toFixed(3));
+  //     console.log("pr used", ex.used);
+
+  //     totalQuantum += quantum;
+  //     // console.log("PRRESTTIME", pr.restTime);
+  //     console.log("EX", ex);
+  //     return ex;
+  //   }
+  //   quant--;
+  // });
+
+  for (let i = 0; i < process.length; i++) {
+    if (process[i].restTime > 0) {
       ex = {
-        id: pr.id,
-        name: pr.name,
+        id: process[i].id,
+        name: process[i].name,
         running: true,
-        processSize: pr.processSize,
+        processSize: process[i].processSize,
         executedTime: totalQuantum,
-        restTime: pr.restTime - quantum,
-        createTime: pr.createTime,
-        used: pr.used + quantum,
+        restTime: process[i].restTime - quantum,
+        createTime: process[i].createTime,
+        used: process[i].used + quantum,
         shouldUse: 0, //adflskjkalsfdjasklj
       };
       ex.shouldUse = ex.used / (totalQuantum / process.length);
       ex.shouldUse = Number(ex.shouldUse.toFixed(3));
-      console.log("pr used", ex.used);
+      // console.log("pr used", ex.used);
 
       totalQuantum += quantum;
-      // console.log("PRRESTTIME", pr.restTime);
-      console.log("EX", ex);
-      return ex;
+      tempArray.push(ex);
     }
-    quant--;
-  });
-
-  sortByShouldUse(process);
+  }
+  process = tempArray;
+  tempArray = [];
+  console.log("O PROCESSO CLONAdo", process);
+  // sortByShouldUse(process);
 
   removeProcess(process);
+  executeProcess();
 }
 /**
  * When the user clicks the button, show the result of the finishedProcess variable in the console.
@@ -113,6 +152,10 @@ function executeProcess() {
 function showResult() {
   console.log("RESULTADO");
   console.log(finishedProcess);
+  // for (let i = 0; i < finishedProcess.length; i++) {
+  // const element = array[i];
+  // console.log(process[i]);
+  // }
 }
 /**
  * > The function creates a process, then executes the process until there is only one process left
@@ -121,8 +164,7 @@ function main() {
   createProcess();
 
   executeProcess();
-
-  showResult();
 }
 
 main();
+showResult();
