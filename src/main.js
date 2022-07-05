@@ -28,13 +28,13 @@ function generateProcess(name, processSize) {
     used: 0, // quanto usou
     shouldUse: 0, // quanto deveria usar
   };
-  // console.log("CRIOU O PROCESSO", processModel);
   totalQuantum += quantum;
 
   return processModel;
 }
+
 /**
- * The above function creates a process.
+ * It creates a process with a random number of instructions
  */
 function createProcess() {
   quant = prompt("Digite a quantidade de process : ");
@@ -55,80 +55,70 @@ function removeProcess(process) {
   if (process.length > 0) {
     for (let i = 0; i < process.length; i++) {
       if (process[i].restTime <= 0) {
-        // console.log("FJALJAFKJ", process);
         console.log("i e o processo", i, process[i]);
         finishedProcess.push(process.splice(i, 1));
       }
     }
   }
-  // if (process.length > 0) {
-  //   process.forEach((pr, index) => {
-  //     if (pr.restTime <= 0) {
-  //       // let index = process.find((pre) => pre.id == pr.id);
-  //       let removed = process.splice(index, 1);
-  //       // process.slice(())
-  //       finishedProcess.push(removed);
-  //     }
-  //   });
-  // }
 }
+
 /**
- * It sorts an array of objects by the value of the property `shouldUse`
- * @param process - The array of processes to sort.
+ * It sorts the processes by their shouldUse value
+ * @param process - The array of processes
  */
 function sortByShouldUse(process) {
   process = process.sort((a, b) => {
     return b.shouldUse - a.shouldUse;
   });
-  // console.log("PROCESS ORDENADA", process);
+  console.log("ARRAY ORDENADO", process);
 }
-/**
- * It executes the process, and then sorts the process by the shouldUse property
- * @returns the process array with the updated values.
- */
 let counter = 0;
-function executeProcess() {
-  // if (process.length < 1) return;
+/**
+ * It will execute the process until all the process are finished
+ * @returns the value of the last expression which is the call to the function itself.
+ */
+async function executeProcess() {
+  // do {
 
-  do {
-    for (let i = 0; i < process.length; i++) {
-      if (process[i].restTime > 0) {
-        // ex = {
-        //   id: process[i].id,
-        //   name: process[i].name,
-        //   running: true,
-        //   processSize: process[i].processSize,
-        //   executedTime: totalQuantum,
-        //   restTime: process[i].restTime - quantum,
-        //   createTime: process[i].createTime,
-        //   used: process[i].used + quantum,
-        //   shouldUse: 0,
-        // };
-        process[i].restTime = process[i].restTime - quantum;
-        process[i].used = process[i].used + quantum;
-        process[i].shouldUse =
-          process[i].used / (totalQuantum / process.length);
-        process[i].shouldUse = Number(process[i].shouldUse.toFixed(3));
-        // console.log("pr used", ex.used);
-
-        totalQuantum += quantum;
-        // tempArray.push(ex);
-      } else {
-        counter++;
-      }
+  if (counter > process.length) return;
+  for (let i = 0; i < process.length; i++) {
+    if (process[i].restTime > 0) {
+      process[i].restTime = process[i].restTime - quantum;
+      process[i].used = process[i].used + quantum;
+      process[i].shouldUse = process[i].used / (totalQuantum / process.length);
+      process[i].shouldUse = Number(process[i].shouldUse.toFixed(3));
+      totalQuantum += quantum;
+    } else {
+      counter++;
     }
-  } while (counter < process.length);
+  }
+  sortByShouldUse(process);
+  await addAnother();
+  executeProcess();
+  // } while (counter < process.length);
 }
 /**
  * When the user clicks the button, show the result of the finishedProcess variable in the console.
  */
 function showResult() {
   console.log("RESULTADO");
-  sortByShouldUse(process);
+  // sortByShouldUse(process);
   console.log(process);
 }
+function addAnother() {
+  s = prompt("Deseja adicionar mais algum processo ?: ");
+  let pName = "processo : ";
+
+  if (s == "s")
+    process.push(
+      generateProcess(
+        pName + Math.random() * 100,
+        Math.floor(Math.random() * 10 + 1)
+      )
+    );
+}
 /**
- * > The function creates a process, then executes the process until there is only one process left
+ * Create a process, then execute it.
  */
 function main() {
   createProcess();

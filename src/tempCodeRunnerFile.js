@@ -1,0 +1,1 @@
+ if (counter > process.length) return;
